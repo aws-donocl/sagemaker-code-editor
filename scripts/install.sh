@@ -82,5 +82,5 @@ rm -rf "${PROJ_ROOT}/vscode/node_modules"
 
 # Build the project
 printf "\n======== Building project in ${PROJ_ROOT}/vscode ========\n"
-yarn --cwd "${PROJ_ROOT}/vscode" install --pure-lockfile --verbose
+yarn --cwd "${PROJ_ROOT}/vscode" install --pure-lockfile
 yarn --cwd "${PROJ_ROOT}/vscode" download-builtin-extensions
