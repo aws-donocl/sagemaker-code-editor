@@ -55,10 +55,10 @@ jobs:
         run: |
           git config --global --add safe.directory /__w/sagemaker-code-editor/sagemaker-code-editor
           sh ./scripts/install.sh -v ${{ needs.check-tag.outputs.version }} 
-      # - name: Publish Release
-      #   uses: softprops/action-gh-release@v2
-      #   # if: startsWith(github.ref, 'refs/tags/v')
-      #   with:
-      #     files: |
-      #       helloworld.py
-      #       helloworld2.py
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Code Editor ${{ needs.check-tag.outputs.version }}
+          tag_name: v${{ needs.check-tag.outputs.version }}
+          files: |
+            code-editor${{ needs.check-tag.outputs.version }}.tar.gz
