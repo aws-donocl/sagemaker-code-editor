@@ -27,7 +27,7 @@ jobs:
         id: check
         run: |
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            VERSION="${{ github.ref }##refs/tags/v}"
+            VERSION="${{ github.ref }}##refs/tags/v"
             echo "Tag starts with 'v'."
             echo "Version: ${VERSION}"
             echo "Continuing..."
@@ -38,7 +38,7 @@ jobs:
             exit 1
           fi
     outputs:
-      version: ${{steps.check.outputs.version}}
+      version: ${{ steps.check.outputs.version }}
       
   release:
     environment: release
