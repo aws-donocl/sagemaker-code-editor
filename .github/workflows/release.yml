@@ -53,6 +53,7 @@ jobs:
           apt-get install -y build-essential g++ libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev python-is-python3 quilt
       - name: Build Tarball
         run: |
+          git config --global --add safe.directory /__w/sagemaker-code-editor/sagemaker-code-editor
           sh ./scripts/install.sh -v ${{ needs.check-tag.outputs.version }} 
       # - name: Publish Release
       #   uses: softprops/action-gh-release@v2
