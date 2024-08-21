@@ -24,7 +24,7 @@ jobs:
         id: check
         run: |
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            VERSION="${{ github.ref.split("refs/tags/v")[1] }}"
+            VERSION="${{ github.ref.split('refs/tags/v')[1] }}"
             echo "Tag starts with 'v'."
             echo "Version: ${VERSION}"
             echo "Continuing..."
