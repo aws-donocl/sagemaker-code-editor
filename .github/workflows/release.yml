@@ -4,8 +4,8 @@ name: Automated Release
 on:
   # Triggers the workflow on updates to the "main" branch which include a version tag
   push:
-    branches:
-      - 'main'
+    # branches:
+    #   - 'main'
     tags:        
       - '**'           # Push events to every tag including hierarchical tags like v1.0/beta
 
