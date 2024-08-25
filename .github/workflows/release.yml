@@ -45,25 +45,38 @@ jobs:
     container:
       image: node:20
     steps:
-      - name: Mock building tarball
-        run: echo "built tarball"
-      # - name: Checkout the main branch
-      #   uses: actions/checkout@v4
-      # - name: Install Dependencies
-      #   run: |
-      #     apt-get update
-      #     apt-get install -y build-essential g++ libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev python-is-python3 quilt
-      # - name: Build Tarball
-      #   run: |
-      #     git config --global --add safe.directory /__w/sagemaker-code-editor/sagemaker-code-editor
-      #     sh ./scripts/install.sh -t ${{ needs.check-tag.outputs.version }} 
-      # - name: Publish Release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     name: Code Editor ${{ needs.check-tag.outputs.version }}
-      #     tag_name: v${{ needs.check-tag.outputs.version }}
-      #     files: |
-      #       code-editor${{ needs.check-tag.outputs.version }}.tar.gz
+      # - name: Mock building tarball
+      #   run: echo "built tarball"
+      - name: Checkout the main branch
+        uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: |
+          apt-get update
+          apt-get install -y build-essential g++ libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev python-is-python3 quilt
+      - name: Build Tarball
+        id: build
+        run: |
+          git config --global --add safe.directory /__w/sagemaker-code-editor/sagemaker-code-editor
+          sh ./scripts/install.sh -t ${{ needs.check-tag.outputs.version }}
+          
+          TARBALL_NAME="code-editor${{ needs.check-tag.outputs.version }}.tar.gz"
+          echo "tarball_name=${TARBALL_NAME}" >> $GITHUB_OUTPUT
+          
+          SHA256_HASH=$(sha256sum ${TARBALL_NAME} | awk '{ print $1 }')
+          echo "sha256_hash=${SHA256_HASH}"
+          echo "sha256_hash=${SHA256_HASH}" >> $GITHUB_OUTPUT
+      - name: Publish Release
+        id: publish
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Code Editor ${{ needs.check-tag.outputs.version }}
+          tag_name: v${{ needs.check-tag.outputs.version }}
+          files: |
+            # code-editor${{ needs.check-tag.outputs.version }}.tar.gz
+            ${{ steps.build.outputs.tarball_name }}
+    outputs:
+      # tarball_name: ${{ steps.build.outputs.tarball_name }}
+      sha256_hash: ${{ steps.build.outputs.sha256_hash }}
 
   update-feedstock:
     runs-on: ubuntu-latest
@@ -79,10 +92,11 @@ jobs:
           VERSION=${{ needs.check-tag.outputs.version }}
           sed -i "s/{% set version = \".*\" %}/{% set version = \"$VERSION\" %}/" recipe/meta.yaml
 
-          URL="helloworld.com"
+          # ${{ fromJSON(needs.release.steps.publish.outputs.assets)[0].browser_download_url }}
+          URL="${{ fromJSON(needs.release.steps.publish.outputs.assets)[0].browser_download_url }}"
           sed -i "s|url: .*\.tar\.gz|url: $URL|" recipe/meta.yaml
 
-          SHA256=123456789
+          SHA256=${{ needs.release.outputs.sha256_hash }}
           sed -i "s|sha256: [0-9a-f]*|sha256: $SHA256|" recipe/meta.yaml
 
           cat recipe/meta.yaml
