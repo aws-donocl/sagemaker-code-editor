@@ -83,10 +83,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [check-tag, release]
     steps:
-      - name: print output url
-        run: echo "${{ needs.release.outputs.assets }}"
-      - name: print output url
-        run: echo "${{ fromJSON(needs.release.outputs.assets)[0].browser_download_url }}"
+    #   - name: print output url
+    #     run: echo "${{ needs.release.outputs.assets }}"
+    #   - name: print output url
+    #     run: echo "${{ fromJSON(needs.release.outputs.assets)[0].browser_download_url }}"
       - name: Checkout the feedstock repository
         uses: actions/checkout@v4
         with:
@@ -97,8 +97,7 @@ jobs:
           VERSION=${{ needs.check-tag.outputs.version }}
           sed -i "s/{% set version = \".*\" %}/{% set version = \"$VERSION\" %}/" recipe/meta.yaml
 
-          # ${{ fromJSON(needs.release.steps.publish.outputs.assets)[0].browser_download_url }}
-          URL="${{ fromJSON(needs.release.steps.publish.outputs.assets)[0].browser_download_url }}"
+          URL="${{ fromJSON(needs.release.outputs.assets)[0].browser_download_url }}"
           sed -i "s|url: .*\.tar\.gz|url: $URL|" recipe/meta.yaml
 
           SHA256=${{ needs.release.outputs.sha256_hash }}
