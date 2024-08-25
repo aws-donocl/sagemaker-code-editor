@@ -62,3 +62,27 @@ jobs:
           tag_name: v${{ needs.check-tag.outputs.version }}
           files: |
             code-editor${{ needs.check-tag.outputs.version }}.tar.gz
+
+  update-feedstock:
+    runs-on: ubuntu-latest
+    needs: [check-tag, release]
+    steps:
+      - name: Checkout the feedstock repository
+        uses: actions/checkout@v4
+        with:
+          repository: 'conda-forge/sagemaker-code-editor-feedstock'
+          ref: 'dev'
+      - name: Update meta.yaml
+        run: |
+          VERSION=${{ needs.check-tag.outputs.version }}
+          sed -i "s/{% set version = \".*\" %}/{% set version = \"$VERSION\" %}/" recipe/meta.yaml
+
+          URL="helloworld.com"
+          sed -i "s|url: .*\.tar\.gz|url: $URL|" recipe/meta.yaml
+
+          SHA256=123456789
+          sed -i "s|sha256: [0-9a-f]*|sha256: $SHA256|" recipe/meta.yaml
+
+          cat recipe/meta.yaml
+
+
