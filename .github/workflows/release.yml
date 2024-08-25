@@ -1,4 +1,4 @@
-name: Automated Release
+vname: Automated Release
 
 # Controls when the workflow will run
 on:
@@ -83,7 +83,7 @@ jobs:
     needs: [check-tag, release]
     steps:
       - name: print output url
-        run: echo "${{ fromJSON(needs.release.steps.publish.outputs.assets)[0].browser_download_url }}"
+        run: echo "${{ needs.release.steps.publish.outputs.assets }}"
       - name: Checkout the feedstock repository
         uses: actions/checkout@v4
         with:
