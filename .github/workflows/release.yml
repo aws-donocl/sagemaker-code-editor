@@ -45,23 +45,25 @@ jobs:
     container:
       image: node:20
     steps:
-      - name: Checkout the main branch
-        uses: actions/checkout@v4
-      - name: Install Dependencies
-        run: |
-          apt-get update
-          apt-get install -y build-essential g++ libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev python-is-python3 quilt
-      - name: Build Tarball
-        run: |
-          git config --global --add safe.directory /__w/sagemaker-code-editor/sagemaker-code-editor
-          sh ./scripts/install.sh -v ${{ needs.check-tag.outputs.version }} 
-      - name: Publish Release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: Code Editor ${{ needs.check-tag.outputs.version }}
-          tag_name: v${{ needs.check-tag.outputs.version }}
-          files: |
-            code-editor${{ needs.check-tag.outputs.version }}.tar.gz
+      - name: Mock building tarball
+        run: echo "built tarball"
+      # - name: Checkout the main branch
+      #   uses: actions/checkout@v4
+      # - name: Install Dependencies
+      #   run: |
+      #     apt-get update
+      #     apt-get install -y build-essential g++ libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev python-is-python3 quilt
+      # - name: Build Tarball
+      #   run: |
+      #     git config --global --add safe.directory /__w/sagemaker-code-editor/sagemaker-code-editor
+      #     sh ./scripts/install.sh -t ${{ needs.check-tag.outputs.version }} 
+      # - name: Publish Release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     name: Code Editor ${{ needs.check-tag.outputs.version }}
+      #     tag_name: v${{ needs.check-tag.outputs.version }}
+      #     files: |
+      #       code-editor${{ needs.check-tag.outputs.version }}.tar.gz
 
   update-feedstock:
     runs-on: ubuntu-latest
