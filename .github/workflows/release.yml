@@ -109,7 +109,7 @@ jobs:
           git config --global user.email 'donocl@amazon.com'
           git add recipe/meta.yaml
           git commit -m "Update recipe/meta.yaml for version ${{ needs.check-tag.outputs.version }}"
-          git push origin ${{ env.branch-name }}
+          git push https://${{ secrets.ACCESS_TOKEN }}@github.com/conda-forge/sagemaker-code-editor-feedstock.git ${{ env.branch-name }}
       - name: Open pull request in feedstock
         uses: peter-evans/create-pull-request@v6
         with:
