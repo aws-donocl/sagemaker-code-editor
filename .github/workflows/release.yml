@@ -105,6 +105,8 @@ jobs:
         run: git diff
       - name: Stage changes
         run: |
+          git config --global user.name 'aws-donocl'
+          git config --global user.email 'donocl@amazon.com'
           git add recipe/meta.yaml
           git commit -m "Update recipe/meta.yaml for version ${{ needs.check-tag.outputs.version }}"
           git push origin ${{ env.branch-name }}
